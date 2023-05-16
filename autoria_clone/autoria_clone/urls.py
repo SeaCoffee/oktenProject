@@ -29,5 +29,12 @@ router.register(r'users', UserViewSet, basename='user')
 
 urlpatterns = [
     path('', include(router.urls)),
+    path('ads/create/', views.AdCreateView.as_view(), name='ad-create'),
+    path('conversations/create/', views.ConversationCreateView.as_view(), name='conversation-create'),
+    path('managers/create/', views.ManagerCreateView.as_view(), name='manager-create'),
+    path('car-makes/', views.CarMakeListView.as_view(), name='car-makes-list'),
+    path('missing-car-make-request/', views.MissingCarMakeRequestCreateView.as_view(), name='missing-car-make-request'),
+    path('currencies/', views.CurrencyListView.as_view(), name='currency-list'),
+    path('exchange-rates/', views.ExchangeRateListView.as_view(), name='exchange-rate-list'),
 ]
 

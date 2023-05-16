@@ -1,12 +1,13 @@
 from rest_framework import serializers
-from .models import User, CarBrand, CarModel, Ad
+from .models import User, CarBrand, CarModel, Ad, Role, \
+    Conversation, Manager, CarMake, MissingCarMakeRequest, Currency, ExchangeRate, AdPrice
 from datetime import date, timedelta
 from django.db.models import Avg
 
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
-        fields = ('id', 'email', 'is_premium')
+        fields = ('id', 'email', 'is_premium', 'account_type', 'roles')
 
 class CarBrandSerializer(serializers.ModelSerializer):
     class Meta:
@@ -22,9 +23,14 @@ class CarModelSerializer(serializers.ModelSerializer):
 class AdSerializer(serializers.ModelSerializer):
     car_model = CarModelSerializer()
     seller = UserSerializer()
+    prices = serializers.SerializerMethodField()
     class Meta:
         model = Ad
         fields = ('id', 'title', 'description', 'price', 'currency', 'car_model', 'seller')
+
+    def get_prices(self, obj):
+        ad_prices = obj.prices.all()
+        return AdPriceSerializer(ad_prices, many=True).data
 
     def to_representation(self, instance):
         representation = super().to_representation(instance)
@@ -58,3 +64,51 @@ class AdPremiumSerializer(serializers.ModelSerializer):
 
     def get_statistics(self, obj):
         return self.context['statistics']
+
+class RoleSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Role
+        fields = '__all__'
+
+class CarBrandSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = CarBrand
+
+class ConversationSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Conversation
+        fields = ('id', 'buyer', 'seller', 'ad', 'created_at')
+
+class ManagerSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Manager
+        fields = '__all__'
+
+class CarMakeSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = CarMake
+        fields = ('id', 'name')
+
+class MissingCarMakeRequestSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = MissingCarMakeRequest
+        fields = ('id', 'car_make', 'seller', 'created_at')
+
+class CurrencySerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Currency
+        fields = ('id', 'name')
+
+class ExchangeRateSerializer(serializers.ModelSerializer):
+    currency = CurrencySerializer()
+
+    class Meta:
+        model = ExchangeRate
+        fields = ('id', 'currency', 'rate', 'date')
+
+class AdPriceSerializer(serializers.ModelSerializer):
+    currency = CurrencySerializer()
+
+    class Meta:
+        model = AdPrice
+        fields = ('id', 'currency', 'price')
