@@ -1,5 +1,8 @@
 from django.db import models
 from django.contrib.auth.models import AbstractBaseUser, BaseUserManager, PermissionsMixin
+from django.contrib.auth import get_user_model
+from django.utils import timezone
+import profanity_check
 
 class CarBrand(models.Model):
     name = models.CharField(max_length=255)
@@ -76,6 +79,14 @@ class Ad(models.Model):
     currency = models.CharField(max_length=3)
     car_model = models.ForeignKey(CarModel, on_delete=models.CASCADE)
     seller = models.ForeignKey(User, on_delete=models.CASCADE)
+    is_active = models.BooleanField(default=True)
+
+    def save(self, *args, **kwargs):
+        text = f'{self.title} {self.description}'
+        if profanity_check.predict([text])[0]:
+            self.is_active = False
+
+        super().save(*args, **kwargs)
 
     def __str__(self):
         return self.title

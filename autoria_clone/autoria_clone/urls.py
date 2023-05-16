@@ -18,20 +18,16 @@ from django.urls import path
 from django.contrib import admin
 from django.urls import path, include
 from rest_framework.routers import DefaultRouter
-from main.views import UserViewSet, CarBrandViewSet, CarModelViewSet, AdViewSet
+from autoria_clone.main.views import UserViewSet, CarBrandViewSet, CarModelViewSet, AdViewSet
 
 router = DefaultRouter()
 router.register(r'users', UserViewSet)
 router.register(r'car-brands', CarBrandViewSet)
 router.register(r'car-models', CarModelViewSet)
 router.register(r'ads', AdViewSet)
+router.register(r'users', UserViewSet, basename='user')
 
 urlpatterns = [
     path('', include(router.urls)),
 ]
-
-urlpatterns = [
-    path('admin/', admin.site.urls),
-]
-
 
