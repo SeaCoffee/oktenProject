@@ -77,10 +77,15 @@ WSGI_APPLICATION = 'autoria_clone.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+        'ENGINE': 'django.db.backends.mysql',
+        'NAME': 'foroktenproject',
+        'USER': 'root',
+        'PASSWORD': 'root',
+        'HOST': 'mysql://localhost:3306',
+        'PORT': '3306',
     }
 }
+
 
 
 # Password validation
