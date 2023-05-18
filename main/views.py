@@ -4,7 +4,7 @@ from rest_framework.permissions import IsAuthenticated
 from django.db.models import Avg
 from django.utils import timezone
 from rest_framework.response import Response
-from autoria_clone.main.serializers import AdPremiumSerializer
+from main.serializers import AdPremiumSerializer
 from django_filters.rest_framework import DjangoFilterBackend
 from .models import User, CarBrand, CarModel, Ad, Conversation, Manager, CarMake, MissingCarMakeRequest, Currency, ExchangeRate, AdPrice
 from .serializers import UserSerializer, CarBrandSerializer, CarModelSerializer, AdSerializer, ConversationSerializer, ManagerSerializer, CarMakeSerializer, MissingCarMakeRequestSerializer, CurrencySerializer, ExchangeRateSerializer

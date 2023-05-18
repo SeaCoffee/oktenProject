@@ -18,7 +18,7 @@ from django.urls import path
 from django.contrib import admin
 from django.urls import path, include
 from rest_framework.routers import DefaultRouter
-from autoria_clone.main.views import UserViewSet, CarBrandViewSet, CarModelViewSet, AdViewSet
+from main.views import UserViewSet, CarBrandViewSet, CarModelViewSet, AdViewSet
 
 router = DefaultRouter()
 router.register(r'users', UserViewSet)
