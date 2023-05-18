@@ -1,7 +1,6 @@
 from django.db import models
 from django.contrib.auth.models import AbstractBaseUser, BaseUserManager, PermissionsMixin
-from django.contrib.auth import get_user_model
-import profanity_check
+
 
 class CarBrand(models.Model):
     name = models.CharField(max_length=255)
@@ -42,21 +41,21 @@ class MyUserManager(BaseUserManager):
         user.save(using=self._db)
         return user
 
+
 class Role(models.Model):
     name = models.CharField(max_length=255)
 
     def __str__(self):
         return self.name
 
-
-class User(AbstractBaseUser, PermissionsMixin):
+class CustomUser(AbstractBaseUser, PermissionsMixin):
     email = models.EmailField(verbose_name='email address', max_length=255, unique=True)
     is_active = models.BooleanField(default=True)
     is_admin = models.BooleanField(default=False)
     is_premium = models.BooleanField(default=False)
     account_type = models.CharField(max_length=255, choices=(('basic', 'Basic'), ('premium', 'Premium')),
                                     default='basic')
-    roles = models.ManyToManyField(Role)
+    roles = models.ManyToManyField(Role, related_name='users')
 
     objects = MyUserManager()
 
@@ -67,16 +66,13 @@ class User(AbstractBaseUser, PermissionsMixin):
         return self.email
 
     def has_perm(self, perm, obj=None):
-        "Does the user have a specific permission?"
         return True
 
     def has_module_perms(self, app_label):
-        "Does the user have permissions to view the app `app_label`?"
         return True
 
     @property
     def is_staff(self):
-        "Is the user a member of staff?"
         return self.is_admin
 
 
@@ -86,36 +82,33 @@ class Ad(models.Model):
     price = models.DecimalField(max_digits=10, decimal_places=2)
     currency = models.CharField(max_length=3)
     car_model = models.ForeignKey(CarModel, on_delete=models.CASCADE)
-    seller = models.ForeignKey(User, on_delete=models.CASCADE)
+    seller = models.ForeignKey('main.CustomUser', on_delete=models.CASCADE)
     is_active = models.BooleanField(default=True)
 
     def save(self, *args, **kwargs):
-        text = f'{self.title} {self.description}'
-        if profanity_check.predict([text])[0]:
-            self.is_active = False
-
+        self.is_active = False
         super().save(*args, **kwargs)
 
     def __str__(self):
         return self.title
 
+
 class Conversation(models.Model):
-    buyer = models.ForeignKey(User, related_name='buyer_conversations', on_delete=models.CASCADE)
-    seller = models.ForeignKey(User, related_name='seller_conversations', on_delete=models.CASCADE)
+    buyer = models.ForeignKey(CustomUser, related_name='buyer_conversations', on_delete=models.CASCADE)
+    seller = models.ForeignKey(CustomUser, related_name='seller_conversations', on_delete=models.CASCADE)
     ad = models.ForeignKey(Ad, on_delete=models.CASCADE)
     created_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
         return f'Conversation #{self.id}'
 
+
 class Manager(models.Model):
-    user = models.OneToOneField(User, on_delete=models.CASCADE)
+    user = models.OneToOneField(CustomUser, on_delete=models.CASCADE)
 
     def __str__(self):
         return str(self.user)
 
-    def __str__(self):
-        return str(self.user)
 
 class CarMake(models.Model):
     name = models.CharField(max_length=255)
@@ -123,9 +116,10 @@ class CarMake(models.Model):
     def __str__(self):
         return self.name
 
+
 class MissingCarMakeRequest(models.Model):
     car_make = models.CharField(max_length=255)
-    seller = models.ForeignKey(User, on_delete=models.CASCADE)
+    seller = models.ForeignKey(CustomUser, on_delete=models.CASCADE)
     created_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
@@ -152,8 +146,6 @@ class AdPrice(models.Model):
 
     def __str__(self):
         return f"{self.ad} - {self.currency} - {self.price}"
-
-
 
 
 

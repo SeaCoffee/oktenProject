@@ -6,13 +6,12 @@ from django.utils import timezone
 from rest_framework.response import Response
 from main.serializers import AdPremiumSerializer
 from django_filters.rest_framework import DjangoFilterBackend
-from .models import User, CarBrand, CarModel, Ad, Conversation, Manager, CarMake, MissingCarMakeRequest, Currency, ExchangeRate, AdPrice
+from .models import CustomUser, CarBrand, CarModel, Ad, Conversation, Manager, CarMake, MissingCarMakeRequest, Currency, ExchangeRate, AdPrice
 from .serializers import UserSerializer, CarBrandSerializer, CarModelSerializer, AdSerializer, ConversationSerializer, ManagerSerializer, CarMakeSerializer, MissingCarMakeRequestSerializer, CurrencySerializer, ExchangeRateSerializer
 from datetime import date, timedelta
 
-
 class UserViewSet(viewsets.ModelViewSet):
-    queryset = User.objects.all()
+    queryset = CustomUser.objects.all()
     serializer_class = UserSerializer
 
 class CarBrandViewSet(viewsets.ModelViewSet):
