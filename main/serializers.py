@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import CustomUser, CarBrand, CarModel, Ad, Role, \
+from .models import CustomUser, CarBrand, CarModels, Ad, Role, \
     Conversation, Manager, CarMake, MissingCarMakeRequest, Currency, ExchangeRate, AdPrice
 from datetime import date, timedelta
 from django.db.models import Avg
@@ -21,7 +21,7 @@ class CarModelSerializer(serializers.ModelSerializer):
     brand = CarBrandSerializer()
 
     class Meta:
-        model = CarModel
+        model = CarModels
         fields = ('id', 'name', 'brand')
 
 

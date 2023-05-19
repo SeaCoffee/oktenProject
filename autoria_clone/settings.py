@@ -1,9 +1,8 @@
 from pathlib import Path
-from django.contrib.auth.models import AbstractUser
 
-BASE_DIR = Path(__file__).resolve().parent.parent
+BASE_DIR = Path(__file__).resolve().parent
 
-AUTH_USER_MODEL = 'main.CustomUser'
+AUTH_USER_MODEL = 'main.models.CustomUser'
 
 SECRET_KEY = 'django-insecure-oi=28a)=1!vlpjs)42r-h6e1kcug_$q$b8mfk8%827m#^5xup_'
 
@@ -14,14 +13,18 @@ ALLOWED_HOSTS = []
 INSTALLED_APPS = [
     'django.contrib.admin',
     'django.contrib.auth',
-    'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'django.contrib.contenttypes'
     'main',
     'rest_framework',
     'corsheaders',
 ]
+
+import django
+django.setup()
+
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
@@ -34,7 +37,7 @@ MIDDLEWARE = [
     'corsheaders.middleware.CorsMiddleware',
 ]
 
-ROOT_URLCONF = 'autoria_clone.urls'
+ROOT_URLCONF = 'oktenProject.urls'
 
 TEMPLATES = [
     {

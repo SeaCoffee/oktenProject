@@ -1,12 +1,12 @@
 from django.urls import path, include
 from rest_framework.routers import DefaultRouter
-from main.views import UserViewSet, CarBrandViewSet, CarModelViewSet, AdViewSet, AdCreateView, ConversationCreateView, \
+from main.views import UserViewSet, CarBrandViewSet, CarModelsViewSet, AdViewSet, AdCreateView, ConversationCreateView, \
     ManagerCreateView, CarMakeListView, MissingCarMakeRequestCreateView, CurrencyListView, ExchangeRateListView
 
 router = DefaultRouter()
 router.register(r'users', UserViewSet)
 router.register(r'car-brands', CarBrandViewSet)
-router.register(r'car-models', CarModelViewSet)
+router.register(r'car-models', CarModelsViewSet)
 router.register(r'ads', AdViewSet)
 
 urlpatterns = [
