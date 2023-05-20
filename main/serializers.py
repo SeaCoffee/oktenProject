@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import CustomUser, CarBrand, CarModels, Ad, Role, \
+from main.models import CustomUser, CarBrand, CarModels, Ad, Role, \
     Conversation, Manager, CarMake, MissingCarMakeRequest, Currency, ExchangeRate, AdPrice
 from datetime import date, timedelta
 from django.db.models import Avg

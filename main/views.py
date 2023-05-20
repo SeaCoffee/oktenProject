@@ -4,8 +4,8 @@ from django.db.models import Avg
 from rest_framework.response import Response
 from main.serializers import AdPremiumSerializer
 from django_filters.rest_framework import DjangoFilterBackend
-from .models import CustomUser, CarBrand, CarModels, Ad, Conversation, Manager, CarMake, MissingCarMakeRequest, Currency, ExchangeRate, AdPrice
-from .serializers import UserSerializer, CarBrandSerializer, CarModelSerializer, AdSerializer, ConversationSerializer, ManagerSerializer, CarMakeSerializer, MissingCarMakeRequestSerializer, CurrencySerializer, ExchangeRateSerializer
+from main.models import CustomUser, CarBrand, CarModels, Ad, Conversation, Manager, CarMake, MissingCarMakeRequest, Currency, ExchangeRate, AdPrice
+from main.serializers import UserSerializer, CarBrandSerializer, CarModelSerializer, AdSerializer, ConversationSerializer, ManagerSerializer, CarMakeSerializer, MissingCarMakeRequestSerializer, CurrencySerializer, ExchangeRateSerializer
 from datetime import date, timedelta
 
 class UserViewSet(viewsets.ModelViewSet):

@@ -1,7 +1,8 @@
 from django.urls import path, include
 from rest_framework.routers import DefaultRouter
-from main.views import UserViewSet, CarBrandViewSet, CarModelsViewSet, AdViewSet, AdCreateView, ConversationCreateView, \
-    ManagerCreateView, CarMakeListView, MissingCarMakeRequestCreateView, CurrencyListView, ExchangeRateListView
+from oktenProject.main.views import UserViewSet, CarBrandViewSet, CarModelsViewSet, AdViewSet, AdCreateView, \
+    ConversationCreateView, ManagerCreateView, CarMakeListView, MissingCarMakeRequestCreateView, CurrencyListView, \
+    ExchangeRateListView
 
 router = DefaultRouter()
 router.register(r'users', UserViewSet)
@@ -10,7 +11,7 @@ router.register(r'car-models', CarModelsViewSet)
 router.register(r'ads', AdViewSet)
 
 urlpatterns = [
-    path('', include(router.urls)),
+    path('main/', include('main.urls')),
     path('ads/create/', AdCreateView.as_view(), name='ad-create'),
     path('conversations/create/', ConversationCreateView.as_view(), name='conversation-create'),
     path('managers/create/', ManagerCreateView.as_view(), name='manager-create'),

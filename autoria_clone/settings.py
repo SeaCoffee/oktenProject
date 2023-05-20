@@ -1,6 +1,6 @@
 from pathlib import Path
 
-BASE_DIR = Path(__file__).resolve().parent
+BASE_DIR = Path(__file__).resolve().parent.parent
 
 AUTH_USER_MODEL = 'main.models.CustomUser'
 
@@ -16,15 +16,14 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'django.contrib.contenttypes'
-    'main',
+    'django.contrib.contenttypes',
+    'main.apps.MainConfig',
     'rest_framework',
     'corsheaders',
+    'autoria_clone'
+
+
 ]
-
-import django
-django.setup()
-
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
@@ -35,9 +34,10 @@ MIDDLEWARE = [
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     'corsheaders.middleware.CorsMiddleware',
+
 ]
 
-ROOT_URLCONF = 'oktenProject.urls'
+ROOT_URLCONF = 'main.urls'
 
 TEMPLATES = [
     {
@@ -57,13 +57,15 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'autoria_clone.wsgi.application'
 
+
+
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
         'NAME': 'foroktenproject',
         'USER': 'root',
         'PASSWORD': 'root',
-        'HOST': 'mysql://localhost:3306',
+        'HOST': 'localhost',
         'PORT': '3306',
     }
 }
@@ -82,7 +84,6 @@ AUTH_PASSWORD_VALIDATORS = [
         'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator',
     },
 ]
-
 
 LANGUAGE_CODE = 'en-us'
 
