@@ -1,4 +1,4 @@
-from rest_framework import viewsets, generics
+from rest_framework import viewsets, generics, status
 from rest_framework.permissions import IsAuthenticated
 from django.db.models import Avg
 from rest_framework.response import Response
@@ -7,6 +7,7 @@ from django_filters.rest_framework import DjangoFilterBackend
 from main.models import CustomUser, CarBrand, CarModels, Ad, Conversation, Manager, CarMake, MissingCarMakeRequest, Currency, ExchangeRate, AdPrice
 from main.serializers import UserSerializer, CarBrandSerializer, CarModelSerializer, AdSerializer, ConversationSerializer, ManagerSerializer, CarMakeSerializer, MissingCarMakeRequestSerializer, CurrencySerializer, ExchangeRateSerializer
 from datetime import date, timedelta
+from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView
 
 class UserViewSet(viewsets.ModelViewSet):
     queryset = CustomUser.objects.all()
@@ -49,10 +50,10 @@ class AdViewSet(viewsets.ModelViewSet):
             }
 
             serializer = AdPremiumSerializer(instance, context={'statistics': statistics})
+            return Response(serializer.data)
         else:
             serializer = self.get_serializer(instance)
-
-        return Response(serializer.data)
+            return Response(serializer.data)
 
     def calculate_average_price_region(self, ad):
         region = ad.seller.profile.region
@@ -63,10 +64,36 @@ class AdViewSet(viewsets.ModelViewSet):
         average_price = Ad.objects.all().aggregate(Avg('price'))
         return average_price.get('price__avg')
 
+    def calculate_price_in_other_currencies(self, price, base_currency):
+        exchange_rates = self.get_exchange_rates()
+
+        base_rate = exchange_rates.get(base_currency)
+        price_usd = price / base_rate
+
+        price_other_currencies = {}
+        for currency, rate in exchange_rates.items():
+            if currency != base_currency:
+                price_other = price_usd * rate
+                price_other_currencies[currency] = round(price_other, 2)
+
+        return price_other_currencies
+
+    def get_exchange_rates(self):
+        exchange_rates = {
+            'USD': 1.0,  # Курс доллара к доллару (1:1)
+            'EUR': 0.82,  # Курс доллара к евро
+            'GBP': 0.73,  # Курс доллара к фунту
+            # Добавьте другие курсы валют
+        }
+
+        return exchange_rates
+
     def perform_create(self, serializer):
         serializer.save(seller=self.request.user)
 
-        price_other_currencies = self.calculate_price_in_other_currencies(serializer.validated_data['price'], serializer.validated_data['currency'])
+        price_other_currencies = self.calculate_price_in_other_currencies(
+            serializer.validated_data['price'], serializer.validated_data['currency']
+        )
 
         ad = serializer.save(seller=self.request.user)
 
@@ -81,7 +108,7 @@ class AdViewSet(viewsets.ModelViewSet):
         if instance.edit_attempts >= 3:
             instance.is_active = False
             instance.save()
-            return Response({'detail': 'Докликался. Объявление помечено как неактивное.'})
+            return Response({'detail': 'Докликался. Объявление помечено как неактивное.'}, status=status.HTTP_400_BAD_REQUEST)
 
         serializer.save()
         instance.edit_attempts += 1

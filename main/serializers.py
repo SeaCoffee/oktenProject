@@ -3,6 +3,7 @@ from main.models import CustomUser, CarBrand, CarModels, Ad, Role, \
     Conversation, Manager, CarMake, MissingCarMakeRequest, Currency, ExchangeRate, AdPrice
 from datetime import date, timedelta
 from django.db.models import Avg
+from rest_framework_simplejwt.tokens import RefreshToken
 
 
 class UserSerializer(serializers.ModelSerializer):
@@ -25,18 +26,22 @@ class CarModelSerializer(serializers.ModelSerializer):
         fields = ('id', 'name', 'brand')
 
 
+class AdPriceSerializer(serializers.ModelSerializer):
+    currency = serializers.StringRelatedField()
+
+    class Meta:
+        model = AdPrice
+        fields = ('id', 'currency', 'price')
+
+
 class AdSerializer(serializers.ModelSerializer):
     car_model = CarModelSerializer()
     seller = UserSerializer()
-    prices = serializers.SerializerMethodField()
+    prices = AdPriceSerializer(many=True)
 
     class Meta:
         model = Ad
         fields = ('id', 'title', 'description', 'price', 'currency', 'car_model', 'seller', 'prices')
-
-    def get_prices(self, obj):
-        ad_prices = obj.prices.all()
-        return AdPriceSerializer(ad_prices, many=True).data
 
     def to_representation(self, instance):
         representation = super().to_representation(instance)
@@ -117,8 +122,23 @@ class ExchangeRateSerializer(serializers.ModelSerializer):
         fields = ('id', 'currency', 'rate', 'date')
 
 
-class AdPriceSerializer(serializers.ModelSerializer):
-    currency = CurrencySerializer()
+class TokenObtainSerializer(serializers.Serializer):
+    email = serializers.EmailField()
+    password = serializers.CharField()
 
-    class Meta:
-        model = AdPrice
+    def validate(self, attrs):
+        email = attrs.get('email')
+        password = attrs.get('password', '')
+
+        if email and password:
+            user = CustomUser.objects.filter(email=email).first()
+
+            if user and user.check_password(password):
+                refresh = RefreshToken.for_user(user)
+                attrs['refresh'] = str(refresh)
+                attrs['access'] = str(refresh.access_token)
+                attrs['user'] = user
+                return attrs
+            raise serializers.ValidationError('Invalid email or password')
+        raise serializers.ValidationError('Email and password are required')
+

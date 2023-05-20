@@ -20,7 +20,7 @@ INSTALLED_APPS = [
     'main.apps.MainConfig',
     'rest_framework',
     'corsheaders',
-    'autoria_clone'
+
 
 
 ]
@@ -69,6 +69,22 @@ DATABASES = {
         'PORT': '3306',
     }
 }
+
+
+REST_FRAMEWORK = {
+    'DEFAULT_RENDERER_CLASSES': [
+        'rest_framework.renderers.JSONRenderer',
+    ],
+    'DEFAULT_PARSER_CLASSES': [
+        'rest_framework.parsers.JSONParser',
+    ],
+
+    'DEFAULT_AUTHENTICATION_CLASSES': [
+        'rest_framework_simplejwt.authentication.JWTAuthentication',
+        'rest_framework.authentication.SessionAuthentication',
+    ],
+}
+
 
 AUTH_PASSWORD_VALIDATORS = [
     {

@@ -1,8 +1,10 @@
 from django.urls import path, include
+from rest_framework import routers
 from rest_framework.routers import DefaultRouter
 from oktenProject.main.views import UserViewSet, CarBrandViewSet, CarModelsViewSet, AdViewSet, AdCreateView, \
     ConversationCreateView, ManagerCreateView, CarMakeListView, MissingCarMakeRequestCreateView, CurrencyListView, \
-    ExchangeRateListView
+    ExchangeRateListView, TokenObtainPairView,TokenRefreshView
+
 
 router = DefaultRouter()
 router.register(r'users', UserViewSet)
@@ -19,4 +21,7 @@ urlpatterns = [
     path('missing-car-make-request/', MissingCarMakeRequestCreateView.as_view(), name='missing-car-make-request'),
     path('currencies/', CurrencyListView.as_view(), name='currency-list'),
     path('exchange-rates/', ExchangeRateListView.as_view(), name='exchange-rate-list'),
+    path('api/token/', TokenObtainPairView.as_view(), name='token_obtain_pair'),
+    path('api/token/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
 ]
+
