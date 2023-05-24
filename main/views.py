@@ -80,10 +80,7 @@ class AdViewSet(viewsets.ModelViewSet):
 
     def get_exchange_rates(self):
         exchange_rates = {
-            'USD': 1.0,  # Курс доллара к доллару (1:1)
-            'EUR': 0.82,  # Курс доллара к евро
-            'GBP': 0.73,  # Курс доллара к фунту
-            # Добавьте другие курсы валют
+            'USD': 0.4
         }
 
         return exchange_rates
